@@ -1,0 +1,179 @@
+{# templates/images/test.html #}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AI Image Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ======  Simple, responsive styling  ====== -->
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f7f7fe;
+            --card-bg: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --error: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.07);
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem 2.2rem 2.4rem;
+        }
+        h1 { font-size: 1.5rem; margin-bottom: 1.4rem; text-align: center; }
+        label { display: block; font-size: .875rem; margin-bottom: .35rem; font-weight: 600; }
+        .form-control, .form-check-input {
+            width: 100%;
+            padding: .7rem .9rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: .95rem;
+            transition: border .2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); }
+        .form-group { margin-bottom: 1.1rem; }
+        .form-check { display: flex; align-items: center; gap: .4rem; margin-bottom: 1.3rem; }
+        .form-check-input { width: 1rem; height: 1rem; }
+        .btn {
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            font-size: 1rem;
+            padding: .8rem 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .btn:hover { background: #4f46e5; }
+        .errorlist { list-style: none; margin-bottom: .8rem; color: var(--error); font-size: .85rem; }
+        
+        /* ====== Image Grid Styling ====== */
+        .image-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            margin-top: 1rem;
+        }
+
+        /* ====== Download button styling ====== */
+        .img-wrapper {
+            position: relative;
+            display: grid;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .img-wrapper img {
+            width: 100%;
+            display: block;
+        }
+        .dl-btn {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            background: rgba(0,0,0,.55);
+            color: #fff;
+            font-size: .75rem;
+            padding: .35rem .55rem;
+            border-radius: 4px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: .3rem;
+            opacity: 0;
+            transition: opacity .25s;
+        }
+        .img-wrapper:hover .dl-btn { opacity: 1; }
+        .dl-btn:hover { background: rgba(0,0,0,.75); }
+
+        @media (max-width: 480px) {
+            .card { padding: 1.5rem 1.2rem 1.8rem; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Generate AI Image</h1>
+
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for err in form.non_field_errors %}
+                    <li>{{ err }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Prompt -->
+            <div class="form-group">
+                {{ form.prompt.label_tag }}
+                {{ form.prompt }}
+                {% if form.prompt.errors %}
+                    <ul class="errorlist">{% for e in form.prompt.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- Number of images -->
+            <div class="form-group">
+                {{ form.num_results.label_tag }}
+                {{ form.num_results }}
+                {% if form.num_results.errors %}
+                    <ul class="errorlist">
+                        {% for e in form.num_results.errors %}
+                            <li>{{ e }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Sync checkbox -->
+            <div class="form-check">
+                {{ form.sync }} {{ form.sync.label_tag }}
+            </div>
+
+            <button type="submit" class="btn">Create</button>
+        </form>
+
+        <!-- Display response when available -->
+            <div class="response">
+                <h2 style="margin-top: 1.6rem; font-size: 1.1rem;">Results</h2>
+                <div class="image-grid">
+                    {% for img in images %}
+                        <div class="img-wrapper">
+                            <img src="{{ img }}" alt="AI generated image">
+                            <a class="dl-btn" href="{{ img }}" download>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     viewBox="0 0 16 16">
+                                    <path d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                                </svg>
+                                Download
+                            </a>
+                        </div>
+                    {% empty %}
+                        <p style="color: var(--muted); grid-column: 1/-1;">No images returned.</p>
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+</body>
+</html>

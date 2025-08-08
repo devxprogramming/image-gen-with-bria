@@ -1,0 +1,23 @@
+# Generation URL endpoints
+
+# Get all enpoints from https://platform.bria.ai/console
+
+BASE_URL=
+BASE_GENERATION=
+FAST_GENERATION=
+PROMPT_ENHANCEMENT=
+VECTOR_GENERATION=
+
+
+BRIA_API_TOKEN="get API key from https://bria.ai"
+
+
+# HD image generations configurations and URLs
+HD_GENERATION=""
+
+
+
+# Core Django settings and configs
+SECRET_KEY="Django Secret Key from settings.py"
+DEBUG=True
+ALLOWED_HOSTS='*'

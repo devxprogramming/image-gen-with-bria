@@ -1,0 +1,47 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea
+
+# VS Code
+.vscode
+
+# Docker
+.dockerignore
+
+# Conda
+conda-meta
+
+# Other
+*.log
+*.swp
+*.swo
+*.pyproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.userosscache
+*.sln.docstates
+*.suo.docstates
+*.userosscache
+*.userprefs
+*.user
+*.sln.docstates
+*.suo.docstates
+*.userosscache
+*.userprefs
+*.user
+response.json
